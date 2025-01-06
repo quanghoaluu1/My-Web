@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.Requests;
 
+
 public class LoginRequest
 {
     [Required]

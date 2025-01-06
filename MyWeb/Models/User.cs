@@ -17,7 +17,6 @@ public class User
     [EmailAddress]
     public required string Email { get; set; }
     [Required]
-    [StringLength(50)]
     public string Password { get; set; }
     [Phone]
     public string? PhoneNumber { get; set; }
