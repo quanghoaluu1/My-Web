@@ -10,14 +10,16 @@ using WebApplication1.Interfaces;
 using WebApplication1.Models;
 using WebApplication1.Requests;
 using WebApplication1.Responses;
+using WebApplication1.Services;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace WebApplication1.Controllers;
 
 [ApiController]
 [Route("authentication")]
-public partial class AuthenticationController(
+public class AuthenticationController(
     MyDBContext context,
+    ValidationService validationService,
     IConfiguration config,
     IUserController userController)
     : ControllerBase, IAuthenticationController
@@ -68,7 +70,7 @@ public partial class AuthenticationController(
 
         try
         {
-            switch (CheckValidPassword(registerRequest.Password, registerRequest.ConfirmPassword))
+            switch (validationService.CheckValidPassword(registerRequest.Password, registerRequest.ConfirmPassword))
             {
                 case 1:
                     return BadRequest("Password must be between 1 and 20 characters");
@@ -90,28 +92,7 @@ public partial class AuthenticationController(
         return BadRequest();
     }
 
-    [GeneratedRegex(@"^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{1,20}$")]
-    private static partial Regex MyRegex();
-
-    private int CheckValidPassword(string password, string confirmPassword)
-    {
-        if (string.IsNullOrEmpty(password) || password.Length < 1 ||
-            password.Length > 20)
-        {
-            return 1;
-        }
-
-        if (!MyRegex().IsMatch(password))
-        {
-            return 2;
-        }
-
-        if (password != confirmPassword)
-        {
-            return 3;
-        }
-        return 0;
-    }
+    
 
     private User MatchUserToRegister(RegisterRequest registerRequest)
     {
